@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { brand } from "@/config/site.config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { ScrollTrigger, prefersReducedMotion } from "@/lib/motion";
 
 const links = [
   { to: "/servicios", label: "Servicios" },
@@ -11,8 +13,27 @@ const links = [
 ];
 
 export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    const trigger = ScrollTrigger.create({
+      trigger: document.body,
+      start: "top -10",
+      onEnter: () => setScrolled(true),
+      onLeaveBack: () => setScrolled(false),
+    });
+    return () => trigger.kill();
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-line/0 bg-bg/80 backdrop-blur transition-colors">
+    <header
+      ref={sentinelRef}
+      className={`sticky top-0 z-40 border-b transition-colors duration-300 ${
+        scrolled ? "border-line bg-bg/90 backdrop-blur" : "border-transparent bg-transparent"
+      }`}
+    >
       <div className="mx-auto flex max-w-none items-center justify-between px-[5vw] py-5">
         <NavLink to="/" className="font-display text-lg lowercase text-ink">
           {brand.name}
@@ -22,7 +43,7 @@ export default function Header() {
             <NavLink
               key={link.to}
               to={link.to}
-              className={({ isActive }) => (isActive ? "text-accent" : "text-ink hover:text-accent")}
+              className={({ isActive }) => (isActive ? "text-accent" : "text-ink hover:text-accent transition-colors")}
             >
               {link.label}
             </NavLink>

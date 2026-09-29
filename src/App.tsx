@@ -1,7 +1,12 @@
-import { Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import CustomCursor from "@/components/CustomCursor";
+import ScrollProgress from "@/components/ScrollProgress";
+import { useSmoothScroll } from "@/lib/useSmoothScroll";
+import { ScrollTrigger } from "@/lib/motion";
 import Inicio from "@/pages/Inicio";
 import Servicios from "@/pages/Servicios";
 import StackAdvisorPage from "@/pages/StackAdvisor";
@@ -12,8 +17,19 @@ import BlogPost from "@/pages/BlogPost";
 import Contacto from "@/pages/Contacto";
 
 export default function App() {
+  useSmoothScroll();
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const id = requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => cancelAnimationFrame(id);
+  }, [location.pathname]);
+
   return (
     <div className="flex min-h-screen flex-col">
+      <CustomCursor />
+      <ScrollProgress />
       <Header />
       <main className="flex-1">
         <Routes>

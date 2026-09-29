@@ -28,3 +28,17 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Cursor custom — solo se activa en desktop vía JS (custom-cursor-active en <body>) */
+.custom-cursor-active {
+  cursor: none;
+}
+.custom-cursor-active a,
+.custom-cursor-active button,
+.custom-cursor-active input,
+.custom-cursor-active textarea {
+  cursor: none;
+}
+.custom-cursor-active .custom-cursor-dot {
+  display: block;
+}

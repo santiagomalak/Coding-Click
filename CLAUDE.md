@@ -13,12 +13,19 @@ Sitio web de servicios de una agencia de desarrollo + marketing (Santiago, full 
 ## Estado actual del código
 Scaffold funcional en Vite + React 18 + TypeScript + Tailwind (`npm install && npm run dev`). Todas las páginas y rutas existen y compilan (`npm run build` sin errores). Packs, precios y datos de contacto viven en `src/config/site.config.ts` — única fuente de verdad, nunca hardcodear esos datos en componentes.
 
+**Ya implementado** (2026-09-29, segunda vuelta):
+- Smooth scroll (Lenis) + GSAP ScrollTrigger, sincronizados vía `src/lib/useSmoothScroll.ts`.
+- Reveals de scroll (`Reveal.tsx`: fade + translateY) y titulares por línea desde máscara (`MaskReveal.tsx`).
+- Cursor custom 8px → 56px con `mix-blend-mode: difference` (`CustomCursor.tsx`, solo desktop).
+- CTAs magnéticos en botones primarios (`useMagnetic.ts`).
+- Header que pasa a blur + fondo oscuro al scrollear (`Header.tsx`).
+- Barra de progreso de scroll a la derecha (`ScrollProgress.tsx`).
+- Transición del marco del hero (rounded-3xl) abriéndose a full-bleed con el scroll (`HeroFrame.tsx`).
+- Todo respeta `prefers-reduced-motion` (se desactiva por completo) y el cursor/magnético solo corren en `pointer: fine` + desktop.
+
 **Todavía NO implementado** (ver `docs/03-marca-y-diseno.md` para el detalle exacto de cada uno):
 - Esferas 3D con física (Three.js/OGL) en hero y footer.
-- Motion real: Lenis (smooth scroll) + GSAP ScrollTrigger, reveals de scroll, stagger de titulares.
-- Cursor custom (8px → 56px, `mix-blend-mode: difference`), ripple de click, CTAs magnéticos.
-- La transición del marco del hero (rounded-3xl) abriéndose a full-bleed con el scroll — hoy está estático.
-- Marquee infinito, header que pasa a blur+negro al scrollear, barra de progreso de scroll.
+- Ripple de click (empuja esferas cercanas) + marquee infinito de herramientas/logos.
 - Conexión real del formulario de contacto (Formspree o Web3Forms — sin definir, ver pendientes).
 - Contenido real de Portfolio y Blog (hoy vacío a propósito — NO inventar proyectos ni posts).
 

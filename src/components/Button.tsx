@@ -1,5 +1,7 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
+import { useMagnetic } from "@/lib/useMagnetic";
 
 type Variant = "primary" | "secondary" | "ghost";
 
@@ -19,16 +21,25 @@ const variants: Record<Variant, string> = {
 };
 
 export default function Button({ children, href, to, variant = "primary", external }: ButtonProps) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  useMagnetic(ref, variant === "primary" ? 0.35 : 0);
+
   const className = `${base} ${variants[variant]}`;
   if (href) {
     return (
-      <a href={href} className={className} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}>
+      <a
+        ref={ref}
+        href={href}
+        className={className}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+      >
         {children}
       </a>
     );
   }
   return (
-    <Link to={to ?? "/"} className={className}>
+    <Link ref={ref} to={to ?? "/"} className={className}>
       {children}
     </Link>
   );
