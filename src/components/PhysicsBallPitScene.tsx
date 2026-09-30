@@ -48,11 +48,18 @@ export default function PhysicsBallPitScene() {
     const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.82, 0) });
     world.broadphase = new CANNON.SAPBroadphase(world);
     world.allowSleep = true;
+    // Más iteraciones que el default (10): con varias esferas arrancando cerca unas de otras
+    // el solver por defecto no llega a resolver bien los contactos y quedan "trabadas" temblando
+    // en vez de asentarse — visto en producción (feedback de Santiago: "se traban y no siguen
+    // nada lógico"). Ver también el spawn en grilla más abajo, que evita que arranquen superpuestas.
+    const solver = new CANNON.GSSolver();
+    solver.iterations = 20;
+    world.solver = solver;
 
     const wallMaterial = new CANNON.Material("wall");
     const sphereMaterial = new CANNON.Material("sphere");
-    world.addContactMaterial(new CANNON.ContactMaterial(wallMaterial, sphereMaterial, { friction: 0.3, restitution: 0.45 }));
-    world.addContactMaterial(new CANNON.ContactMaterial(sphereMaterial, sphereMaterial, { friction: 0.15, restitution: 0.55 }));
+    world.addContactMaterial(new CANNON.ContactMaterial(wallMaterial, sphereMaterial, { friction: 0.3, restitution: 0.35 }));
+    world.addContactMaterial(new CANNON.ContactMaterial(sphereMaterial, sphereMaterial, { friction: 0.15, restitution: 0.4 }));
 
     const wallBodies: CANNON.Body[] = [];
     function addStaticBox(pos: [number, number, number], size: [number, number, number]) {
@@ -75,8 +82,8 @@ export default function PhysicsBallPitScene() {
       addStaticBox([0, -halfH - thick / 2 + 0.05, 0], [viewW + thick * 2, thick, 4]);
       addStaticBox([-halfW - thick / 2 + 0.05, 0, 0], [thick, viewH + thick * 2, 4]);
       addStaticBox([halfW + thick / 2 - 0.05, 0, 0], [thick, viewH + thick * 2, 4]);
-      addStaticBox([0, 0, -1.6], [viewW + thick * 2, viewH + thick * 2, thick]);
-      addStaticBox([0, 0, 1.6], [viewW + thick * 2, viewH + thick * 2, thick]);
+      addStaticBox([0, 0, -2.2], [viewW + thick * 2, viewH + thick * 2, thick]);
+      addStaticBox([0, 0, 2.2], [viewW + thick * 2, viewH + thick * 2, thick]);
 
       return { halfW, halfH };
     }
@@ -98,14 +105,29 @@ export default function PhysicsBallPitScene() {
     const bodies: CANNON.Body[] = [];
     const meshes: THREE.Mesh[] = [];
 
+    // Arrancan en una grilla (no todas apiladas en la misma columna con solo 0.6 de separación
+    // vertical, que es MENOS que su propio diámetro de 0.9 — eso las hacía arrancar superpuestas
+    // y el motor de física las empujaba de cualquier forma para separarlas). Con grilla + jitter
+    // chico no hay superposición inicial, así que caen prolijo y se apilan de forma creíble.
+    const cols = isNarrow ? 3 : 6;
+    const cellWidth = (halfW * 1.6) / cols;
+    const rowSpacing = SPHERE_RADIUS * 2 * 1.6;
+
     for (let i = 0; i < count; i++) {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const cellCenterX = -halfW * 0.8 + cellWidth * (col + 0.5);
+      const x = cellCenterX + (Math.random() - 0.5) * cellWidth * 0.3;
+      const y = 3 + row * rowSpacing + Math.random() * 0.2;
+      const z = (Math.random() - 0.5) * 1.0;
+
       const body = new CANNON.Body({
         mass: 1,
         shape: new CANNON.Sphere(SPHERE_RADIUS),
         material: sphereMaterial,
-        position: new CANNON.Vec3((Math.random() - 0.5) * halfW * 1.3, 4 + i * 0.6, (Math.random() - 0.5) * 0.6),
-        linearDamping: 0.35,
-        angularDamping: 0.6,
+        position: new CANNON.Vec3(x, y, z),
+        linearDamping: 0.1,
+        angularDamping: 0.4,
       });
       world.addBody(body);
       bodies.push(body);
