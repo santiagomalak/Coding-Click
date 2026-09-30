@@ -15,10 +15,10 @@
 - **2026-09-30** — Esferas 3D, tercera vuelta: se confirmó en el sitio en vivo (no solo como riesgo teórico) que las esferas ambientales, al asentarse por gravedad contra el borde real del viewport, tapaban el logo/copyright del footer y los CTA del hero según scroll. Se corrigió en dos partes: (1) se atenúan a opacidad 0 cuando el footer se acerca (`IntersectionObserver`); (2) el piso de la física se subió a la mitad de la mitad inferior del viewport en general, dejando libre la franja de abajo donde suele haber UI.
 - **2026-09-30** — Titular del hero: la línea "Hacemos crecer tu negocio" pasa de peso 300 (Light) a 400 (Regular) — en Light la "g" de Space Grotesk se leía casi como "q" a ese tamaño (bug de legibilidad de la fuente, no un typo). "online" suma efecto vidrio (panel esmerilado + distorsión SVG sutil) y el trazo pasa a ser lima animado: titilea irregular al entrar (como neón mal conectado) y se asienta en un pulso parejo en loop.
 - **2026-09-30** — Marquee de stack/herramientas: fade en los bordes (antes se cortaba en seco) + cada 4to ítem en lima fijo como acento, en vez de todo gris parejo.
+- **2026-09-30** — Logo: **definido**. Maia entregó el set completo ("coding-click-4a": isotipo + horizontal, en vidrio/blanco/negro/color, SVG + PNG en todos los tamaños + favicon.ico), guardado en `marca/coding-click-4a/`. En uso: isotipo versión vidrio en el header (`public/logo-isotipo-vidrio.svg`, referenciado desde `brand.logoSrc`), favicon con la versión "color" (plana) porque el detalle de vidrio se pierde por debajo de 128px, según el propio README del entregable.
 
 ## Falta definir (Santiago)
 - **Nombre final**: ¿"Coding Click" queda o cambia? Todo el copy y la config están armados para que cambiarlo sea editar un solo archivo.
-- **Logo definitivo**: hoy hay placeholder. Ver brief de logo en `03-marca-y-diseno.md`.
 - **Número de WhatsApp real** (hoy provisorio en la config).
 - **Redes sociales** de la agencia (links reales para el footer).
 - **Precios definitivos** (hoy son rangos orientativos, ver `02-packs-y-precios.md`).
