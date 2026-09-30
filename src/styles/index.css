@@ -49,6 +49,34 @@ body {
   filter: url(#glass-distort);
 }
 
+/* Trazo de "online": neón lima que arranca titilando como un tubo mal conectado y después se
+   asienta en un pulso parejo, en loop, para siempre. Vive en un span propio (no en .glass-word)
+   así la animación de opacidad/glow nunca toca el panel esmerilado de atrás, que queda fijo. */
+.online-neon {
+  -webkit-text-stroke: 1.5px #C6FF3D;
+  text-shadow: 0 0 8px rgba(198, 255, 61, 0.6), 0 0 18px rgba(198, 255, 61, 0.25);
+  animation:
+    online-flicker-in 1.6s steps(1, end) 1 forwards,
+    online-neon-pulse 2.6s ease-in-out 1.6s infinite;
+}
+
+@keyframes online-flicker-in {
+  0%   { opacity: 0.15; text-shadow: none; }
+  6%   { opacity: 1; text-shadow: 0 0 10px rgba(198, 255, 61, 0.7), 0 0 22px rgba(198, 255, 61, 0.3); }
+  11%  { opacity: 0.25; text-shadow: none; }
+  17%  { opacity: 1; text-shadow: 0 0 10px rgba(198, 255, 61, 0.7), 0 0 22px rgba(198, 255, 61, 0.3); }
+  24%  { opacity: 0.4; text-shadow: 0 0 4px rgba(198, 255, 61, 0.3); }
+  30%  { opacity: 1; text-shadow: 0 0 10px rgba(198, 255, 61, 0.7), 0 0 22px rgba(198, 255, 61, 0.3); }
+  40%  { opacity: 0.8; text-shadow: 0 0 8px rgba(198, 255, 61, 0.55); }
+  48%  { opacity: 1; text-shadow: 0 0 10px rgba(198, 255, 61, 0.7), 0 0 22px rgba(198, 255, 61, 0.3); }
+  100% { opacity: 1; text-shadow: 0 0 8px rgba(198, 255, 61, 0.6), 0 0 18px rgba(198, 255, 61, 0.25); }
+}
+
+@keyframes online-neon-pulse {
+  0%, 100% { opacity: 1; text-shadow: 0 0 8px rgba(198, 255, 61, 0.6), 0 0 18px rgba(198, 255, 61, 0.25); }
+  50%      { opacity: 0.82; text-shadow: 0 0 4px rgba(198, 255, 61, 0.35), 0 0 10px rgba(198, 255, 61, 0.12); }
+}
+
 /* Cursor custom — solo se activa en desktop vía JS (custom-cursor-active en <body>) */
 .custom-cursor-active {
   cursor: none;

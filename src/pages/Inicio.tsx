@@ -26,12 +26,19 @@ export default function Inicio() {
           <MaskReveal trigger="mount" delay={0.1} className="font-normal">
             Hacemos crecer tu negocio
           </MaskReveal>
-          <MaskReveal trigger="mount" delay={0.22}>
+          <MaskReveal trigger="mount" delay={0.22} className="mt-[0.14em]">
             {/* Efecto "vidrio": panel esmerilado (backdrop-filter) detrás de la palabra + una
                 distorsión SVG sutil (feTurbulence/feDisplacementMap, filtro definido abajo) para
                 que se sienta como si se viera a través de una superficie de vidrio irregular en
-                vez de un simple blur — conecta con el material de las esferas 3D. */}
-            <span className="glass-word [-webkit-text-stroke:1px_#F5F5F5] text-transparent">online</span>
+                vez de un simple blur — conecta con el material de las esferas 3D. mt-[0.14em]
+                (relativo al tamaño gigante de esta línea) separa el panel de la "g" de "negocio"
+                de arriba, que con el peso 400 nuevo se pisaba con el borde del panel.
+                El trazo (.online-neon) vive en un span aparte adentro del panel (.glass-word)
+                para poder animarlo — titileo de neón mal conectado al entrar y después un pulso
+                parejo en loop — sin tocar el panel de vidrio en sí, que se queda fijo. */}
+            <span className="glass-word">
+              <span className="online-neon text-transparent">online</span>
+            </span>
           </MaskReveal>
         </h1>
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
