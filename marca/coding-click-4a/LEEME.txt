@@ -1,0 +1,15 @@
+Coding Click · logo 4a
+
+svg/  Vectores (el texto "coding click" está convertido a curvas, no necesita la fuente).
+  isotipo-vidrio / logo-horizontal-vidrio: versión con brillo. Usar en grande: hero, presentaciones, avatar.
+  isotipo-color / logo-horizontal-color: blanco + punto lima. Versión principal plana.
+  isotipo-blanco / isotipo-negro (y horizontales): monocromáticas.
+
+png/  Fondo transparente, del más grande al más chico.
+  La versión vidrio llega hasta 128 px. Para tamaños menores usar "color".
+png/con-fondo/  Con fondo #050505: avatar de redes (1080), íconos de app (512/192), apple-touch-icon (180).
+
+favicon.ico  Incluye 16, 32 y 48 px.
+
+Colores: fondo #050505 · acento #C6FF3D · blanco #FFFFFF
+Tipografía del wordmark: Space Grotesk Regular, tracking -2%.

@@ -35,7 +35,8 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-none items-center justify-between px-[5vw] py-5">
-        <NavLink to="/" className="font-display text-lg lowercase text-ink">
+        <NavLink to="/" className="flex items-center gap-2 font-display text-lg lowercase text-ink">
+          <img src={brand.logoSrc} alt="" className="h-7 w-7" />
           {brand.name}
         </NavLink>
         <nav className="hidden gap-8 text-xs uppercase tracking-wide md:flex">

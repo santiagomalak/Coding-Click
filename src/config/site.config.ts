@@ -5,7 +5,7 @@
 export const brand = {
   name: "Coding Click", // PROVISORIO — ver docs/05-pendientes-y-decisiones.md
   tagline: "Desarrollo web + marketing, todo en un solo lugar",
-  logoSrc: "/logo-provisorio.svg",
+  logoSrc: "/logo-isotipo-vidrio.svg", // isotipo real (versión vidrio, entregado por Maia — marca/coding-click-4a)
 };
 
 export const contact = {
