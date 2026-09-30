@@ -1,31 +1,37 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { gsap, isDesktopPointer, prefersReducedMotion } from "@/lib/motion";
 import { viewSizeAtZ } from "@/lib/three-utils";
 
-// Esferas grandes, mate/glossy, ancladas a las esquinas del viewport, sangrando fuera de pantalla.
-// Referencia visual: shot de Dribbble "kynesys — Crypto Research Lab" (Denys Ishchenko) — la referencia
-// en sí es estática (confirmado cuadro por cuadro sobre una grabación real del shot), pero acá le sumamos
-// vida propia para que no se sienta "muerta": 4 formas DISTINTAS (una esfera lisa se ve igual rotando,
-// por eso las otras tres tienen relieve — grooves, blob con ruido, facetada), rotación + deriva tipo
-// Lissajous (sube/baja y va y viene en un patrón suave, no al azar) y una caída lenta de entrada al
-// cargar la página. La física real (caen/rebotan/se empujan con el mouse y el click) vive aparte, en el
-// ball-pit del footer (`PhysicsBallPitScene.tsx`).
+// Objetos de fondo con FÍSICA REAL (cannon-es) — de tamaños y formas variados, se sueltan desde
+// arriba al centro de la pantalla y caen/rebotan/se apilan con gravedad real contra el piso y los
+// bordes del viewport. Reaccionan al mouse y al evento global "site:click-impulse" en toda la
+// página (el mismo que dispara `ClickRipple.tsx`), igual que el ball-pit del footer — comparten
+// el mismo motor y el mismo ajuste de estabilidad (spawn en grilla sin superposición + solver con
+// más iteraciones, ver `PhysicsBallPitScene.tsx`).
+//
+// Iteración anterior (4 esferas lisas fijas, una por esquina, sin física, con deriva simulada por
+// GSAP) reemplazada por pedido de Santiago 2026-09-30: "no me gusta que haya una en cada esquina,
+// deberían aparecer de diversos tamaños y formas... como si las soltaran desde el medio arriba y
+// caigan" + "mejor usar leyes de física reales para que sea algo que realmente sirva".
+//
+// Simplificación a propósito: la FORMA visual (lisa/acanalada/blob/facetada) es solo estética —
+// el cuerpo físico de cada una sigue siendo una esfera simple (CANNON.Sphere). Un hull real por
+// forma sería mucho más caro y no se nota la diferencia en objetos tan chicos de fondo.
 
-// Ruido barato (suma de senos) solo para desplazar vértices una vez al construir la geometría —
-// no hace falta una librería de ruido real para esto.
 function cheapNoise(x: number, y: number, z: number) {
   return (Math.sin(x * 3.1 + y * 1.7) + Math.sin(y * 2.3 + z * 2.9) + Math.sin(z * 4.1 + x * 2.2)) / 3;
 }
 
 function buildSmoothSphere(radius: number) {
-  return new THREE.SphereGeometry(radius, 48, 48);
+  return new THREE.SphereGeometry(radius, 40, 40);
 }
 
-// Esfera acanalada (grooves), como el objeto "Morph" de la referencia.
+// Esfera acanalada (grooves), como el objeto "Morph" de la referencia Kynesys.
 function buildRidgedSphere(radius: number) {
-  const geo = new THREE.SphereGeometry(radius, 96, 96);
+  const geo = new THREE.SphereGeometry(radius, 80, 80);
   const pos = geo.attributes.position;
   const v = new THREE.Vector3();
   const n = new THREE.Vector3();
@@ -43,7 +49,7 @@ function buildRidgedSphere(radius: number) {
 
 // Blob orgánico con ruido, como el objeto "LQD" de la referencia.
 function buildBlobSphere(radius: number) {
-  const geo = new THREE.IcosahedronGeometry(radius, 5);
+  const geo = new THREE.IcosahedronGeometry(radius, 4);
   const pos = geo.attributes.position;
   const v = new THREE.Vector3();
   const n = new THREE.Vector3();
@@ -58,12 +64,15 @@ function buildBlobSphere(radius: number) {
   return geo;
 }
 
-// Forma facetada low-poly, como un cristal — variedad visual barata y con sombreado plano bien marcado.
+// Forma facetada low-poly, como un cristal.
 function buildFacetedShape(radius: number) {
   return new THREE.IcosahedronGeometry(radius, 0).toNonIndexed();
 }
 
 const SHAPE_BUILDERS = [buildSmoothSphere, buildRidgedSphere, buildBlobSphere, buildFacetedShape];
+
+const DESKTOP_COUNT = 6;
+const MOBILE_COUNT = 4;
 
 export default function AmbientOrbs() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,16 +81,18 @@ export default function AmbientOrbs() {
     const container = containerRef.current;
     if (!container || prefersReducedMotion()) return;
 
-    const isMobile = window.innerWidth < 768;
-    const count = isMobile ? 2 : 4;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    const isMobile = width < 768;
+    const count = isMobile ? MOBILE_COUNT : DESKTOP_COUNT;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.z = 10;
 
     const pmrem = new THREE.PMREMGenerator(renderer);
@@ -101,125 +112,158 @@ export default function AmbientOrbs() {
       clearcoatRoughness: 0.2,
     });
 
-    const corners: Array<[number, number]> = [
-      [-1, 1],
-      [1, 1],
-      [-1, -1],
-      [1, -1],
-    ];
+    const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.82, 0) });
+    world.broadphase = new CANNON.SAPBroadphase(world);
+    world.allowSleep = true;
+    const solver = new CANNON.GSSolver();
+    solver.iterations = 20;
+    world.solver = solver;
 
-    type OrbState = {
-      mesh: THREE.Mesh;
-      baseX: number;
-      baseY: number;
-      driftAmpX: number;
-      driftAmpY: number;
-      driftFreqX: number;
-      driftFreqY: number;
-      driftPhaseX: number;
-      driftPhaseY: number;
-      rotSpeedX: number;
-      rotSpeedY: number;
-    };
-    const orbs: OrbState[] = [];
-    const geometries: THREE.BufferGeometry[] = [];
-    let currentViewH = 0;
+    const wallMaterial = new CANNON.Material("wall");
+    const sphereMaterial = new CANNON.Material("sphere");
+    world.addContactMaterial(new CANNON.ContactMaterial(wallMaterial, sphereMaterial, { friction: 0.3, restitution: 0.35 }));
+    world.addContactMaterial(new CANNON.ContactMaterial(sphereMaterial, sphereMaterial, { friction: 0.15, restitution: 0.4 }));
 
-    function layout() {
-      const { width: viewW, height: viewH } = viewSizeAtZ(camera, 0);
-      currentViewH = viewH;
-      const radius = Math.max(viewW, viewH) * 0.24;
-      orbs.forEach((orb, i) => {
-        const [sx, sy] = corners[i];
-        orb.mesh.scale.setScalar(radius);
-        orb.baseX = sx * viewW * 0.42;
-        orb.baseY = sy * viewH * 0.42;
-        orb.mesh.position.x = orb.baseX;
-        orb.mesh.position.z = -1 - i * 0.4;
-        orb.driftAmpX = radius * 0.06;
-        orb.driftAmpY = radius * 0.09;
-      });
+    const wallBodies: CANNON.Body[] = [];
+    function addStaticBox(pos: [number, number, number], size: [number, number, number]) {
+      const body = new CANNON.Body({ mass: 0, material: wallMaterial });
+      body.addShape(new CANNON.Box(new CANNON.Vec3(size[0] / 2, size[1] / 2, size[2] / 2)));
+      body.position.set(...pos);
+      world.addBody(body);
+      wallBodies.push(body);
     }
+
+    let halfW = 0;
+    let halfH = 0;
+
+    function buildBounds() {
+      for (const body of wallBodies) world.removeBody(body);
+      wallBodies.length = 0;
+
+      const { width: viewW, height: viewH } = viewSizeAtZ(camera, 0);
+      halfW = viewW / 2;
+      halfH = viewH / 2;
+      const thick = 2;
+
+      addStaticBox([0, -halfH - thick / 2 + 0.05, 0], [viewW + thick * 2, thick, 4]);
+      addStaticBox([-halfW - thick / 2 + 0.05, 0, 0], [thick, viewH + thick * 2, 4]);
+      addStaticBox([halfW + thick / 2 - 0.05, 0, 0], [thick, viewH + thick * 2, 4]);
+      addStaticBox([0, 0, -2.2], [viewW + thick * 2, viewH + thick * 2, thick]);
+      addStaticBox([0, 0, 2.2], [viewW + thick * 2, viewH + thick * 2, thick]);
+    }
+    buildBounds();
+
+    // Radio base relativo al viewport, con variación de tamaño por objeto ("diversos tamaños").
+    const baseRadius = Math.max(halfW, halfH) * 0.11;
+    const radii = Array.from({ length: count }, () => baseRadius * (0.6 + Math.random() * 0.7));
+    const maxRadius = Math.max(...radii);
+
+    const bodies: CANNON.Body[] = [];
+    const meshes: THREE.Mesh[] = [];
+    const geometries: THREE.BufferGeometry[] = [];
+
+    // Se sueltan desde arriba, cerca del centro horizontal (no una por esquina), en una grilla
+    // angosta de 2 columnas para no arrancar superpuestas (la separación usa el radio más grande
+    // del grupo, así ninguna se toca al arrancar sin importar el tamaño que le tocó).
+    const cols = 2;
+    const cellWidth = maxRadius * 2.6;
+    const rowSpacing = maxRadius * 3.4;
 
     for (let i = 0; i < count; i++) {
-      const geometry = SHAPE_BUILDERS[i % SHAPE_BUILDERS.length](1);
+      const radius = radii[i];
+      const geometry = SHAPE_BUILDERS[i % SHAPE_BUILDERS.length](radius);
       geometries.push(geometry);
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-      scene.add(mesh);
-      orbs.push({
-        mesh,
-        baseX: 0,
-        baseY: 0,
-        driftAmpX: 0,
-        driftAmpY: 0,
-        driftFreqX: 0.15 + Math.random() * 0.08,
-        driftFreqY: 0.11 + Math.random() * 0.06,
-        driftPhaseX: Math.random() * Math.PI * 2,
-        driftPhaseY: Math.random() * Math.PI * 2,
-        rotSpeedX: 0.002 + Math.random() * 0.0025,
-        rotSpeedY: 0.0025 + Math.random() * 0.003,
-      });
-    }
-    layout();
 
-    // Caída de entrada: arrancan arriba del viewport (en unidades del mundo 3D, no píxeles
-    // de pantalla) y bajan lento hasta su posición de reposo.
-    const fallState = orbs.map(() => ({ y: 0 }));
-    orbs.forEach((orb, i) => {
-      fallState[i].y = orb.baseY + currentViewH * 1.3;
-      gsap.to(fallState[i], {
-        y: orb.baseY,
-        duration: 2.6 + i * 0.25,
-        delay: 0.15 + i * 0.12,
-        ease: "power2.out",
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const cellCenterX = -cellWidth * ((cols - 1) / 2) + cellWidth * col;
+      const x = cellCenterX + (Math.random() - 0.5) * cellWidth * 0.25;
+      // Arrancan arriba del borde visible del viewport para que se las vea caer, no ya adentro.
+      const y = halfH * 1.3 + row * rowSpacing + Math.random() * 0.2;
+      const z = (Math.random() - 0.5) * 1.0;
+
+      const body = new CANNON.Body({
+        mass: 1,
+        shape: new CANNON.Sphere(radius),
+        material: sphereMaterial,
+        position: new CANNON.Vec3(x, y, z),
+        linearDamping: 0.1,
+        angularDamping: 0.4,
       });
-    });
+      world.addBody(body);
+      bodies.push(body);
+
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+      meshes.push(mesh);
+    }
+
+    const raycaster = new THREE.Raycaster();
+    const pointerNdc = new THREE.Vector2();
+    const zeroPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const hitPoint = new THREE.Vector3();
+
+    function pointerToWorld(clientX: number, clientY: number) {
+      pointerNdc.x = (clientX / window.innerWidth) * 2 - 1;
+      pointerNdc.y = -(clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointerNdc, camera);
+      raycaster.ray.intersectPlane(zeroPlane, hitPoint);
+      return hitPoint;
+    }
+
+    function applyRadialImpulse(point: THREE.Vector3, strength: number, radius: number) {
+      for (const body of bodies) {
+        const dx = body.position.x - point.x;
+        const dy = body.position.y - point.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
+        if (dist >= radius) continue;
+        const falloff = 1 - dist / radius;
+        body.applyImpulse(
+          new CANNON.Vec3((dx / dist) * strength * falloff, (dy / dist) * strength * falloff * 0.6 + strength * falloff * 0.15, 0)
+        );
+        body.wakeUp();
+      }
+    }
 
     const desktopPointer = isDesktopPointer();
-    let targetRotY = 0;
-    let targetRotX = 0;
 
     function onPointerMove(e: PointerEvent) {
       if (!desktopPointer) return;
-      targetRotY = (e.clientX / window.innerWidth - 0.5) * 0.16;
-      targetRotX = (e.clientY / window.innerHeight - 0.5) * 0.1;
+      applyRadialImpulse(pointerToWorld(e.clientX, e.clientY), 1.6, 1.6);
     }
     if (desktopPointer) window.addEventListener("pointermove", onPointerMove);
 
+    function onClickImpulse(e: Event) {
+      const detail = (e as CustomEvent<{ x: number; y: number }>).detail;
+      if (!detail) return;
+      applyRadialImpulse(pointerToWorld(detail.x, detail.y), 5, 2.4);
+    }
+    window.addEventListener("site:click-impulse", onClickImpulse);
+
     function onResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      layout();
-      orbs.forEach((orb, i) => {
-        fallState[i].y = orb.baseY;
-      });
+      renderer.setSize(width, height);
+      buildBounds();
     }
     window.addEventListener("resize", onResize);
 
-    const clock = new THREE.Clock();
-
     function tick() {
-      const t = clock.getElapsedTime();
-      scene.rotation.y += (targetRotY - scene.rotation.y) * 0.04;
-      scene.rotation.x += (targetRotX - scene.rotation.x) * 0.04;
-
-      orbs.forEach((orb, i) => {
-        orb.mesh.rotation.x += orb.rotSpeedX;
-        orb.mesh.rotation.y += orb.rotSpeedY;
-        orb.mesh.position.x = orb.baseX + Math.sin(t * orb.driftFreqX + orb.driftPhaseX) * orb.driftAmpX;
-        orb.mesh.position.y = fallState[i].y + Math.sin(t * orb.driftFreqY + orb.driftPhaseY) * orb.driftAmpY;
-      });
-
+      world.fixedStep();
+      for (let i = 0; i < bodies.length; i++) {
+        meshes[i].position.copy(bodies[i].position as unknown as THREE.Vector3);
+        meshes[i].quaternion.copy(bodies[i].quaternion as unknown as THREE.Quaternion);
+      }
       renderer.render(scene, camera);
     }
     gsap.ticker.add(tick);
 
     return () => {
       gsap.ticker.remove(tick);
-      gsap.killTweensOf(fallState);
-      window.removeEventListener("pointermove", onPointerMove);
+      if (desktopPointer) window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("site:click-impulse", onClickImpulse);
       window.removeEventListener("resize", onResize);
       for (const geometry of geometries) geometry.dispose();
       material.dispose();
