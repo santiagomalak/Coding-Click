@@ -19,7 +19,13 @@ export default {
         body: ["Inter", "sans-serif"],
       },
       fontSize: {
-        display: ["clamp(3rem, 9vw, 10rem)", { lineHeight: "0.95", letterSpacing: "-0.03em" }],
+        // fontWeight 300 (Light) por default: es el peso pensado para este tamaño gigante
+        // (ver docs/03-marca-y-diseno.md "Space Grotesk Light"), antes quedaba en 400
+        // regular porque no se especificaba y ahora sí se carga el peso 300 de verdad.
+        display: [
+          "clamp(3rem, 9vw, 10rem)",
+          { lineHeight: "0.95", letterSpacing: "-0.03em", fontWeight: "300" },
+        ],
       },
       transitionTimingFunction: {
         section: "cubic-bezier(0.16, 1, 0.3, 1)",

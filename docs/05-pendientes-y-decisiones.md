@@ -9,6 +9,9 @@
 - **2026-09-29** — Modo claro: queda documentado (paleta propuesta en `03-marca-y-diseno.md`) pero se posterga a después del lanzamiento.
 - **2026-09-29** — Repo de GitHub: **privado**. Conexión a Vercel: Santiago la hace él mismo una vez que haya una base del proyecto lista.
 - **2026-09-30** — Esferas 3D: se separan en dos capas (esferas ambientales estáticas en las esquinas de todo el sitio + ball-pit con física real solo en el footer), después de revisar cuadro por cuadro un video real del shot de Kynesys que mostró que la referencia NO tiene física (es estática + un morph de geometría por sección que decidimos no copiar). Material: negro clearcoat + rim light en ambas capas, nunca lima de relleno. Detalle completo en `03-marca-y-diseno.md` → "Elementos 3D".
+- **2026-09-30** — Esferas 3D, segunda vuelta: por feedback de Santiago viendo el deploy ("se traban", "no me gusta una por esquina"), se corrigió un bug real de física (arrancaban superpuestas) y se rediseñaron como objetos de tamaños/formas variados con física real que se sueltan desde arriba al centro (ya no ancladas a las esquinas) — ahora las dos capas (ambiente + footer) comparten el mismo motor.
+- **2026-09-30** — Tipografía: **confirmada** Space Grotesk (títulos, peso Light/300 por default en el tamaño display) + Inter (cuerpo) — ya estaban en el código pero nunca se cargaban de verdad (faltaba el link a Google Fonts en `index.html`), corregido.
+- **2026-09-30** — Texto secundario: gris con un toque sutil de verde lima (`#93987F`, antes `#8A8A8A` neutro) + `text-shadow` sutil en todo el texto del sitio, para que no se pierda contra las esferas 3D de fondo.
 
 ## Falta definir (Santiago)
 - **Nombre final**: ¿"Coding Click" queda o cambia? Todo el copy y la config están armados para que cambiarlo sea editar un solo archivo.
@@ -18,7 +21,6 @@
 - **Precios definitivos** (hoy son rangos orientativos, ver `02-packs-y-precios.md`).
 - **Contenido real de Portfolio**: al menos 2–3 proyectos reales para lanzar (con imagen, tipo de proyecto, breve descripción).
 - **Contenido real de Blog**: al menos 1–2 posts para no lanzar la página vacía (o placeholders si se prefiere arrancar así).
-- **Fuente tipográfica**: propuesta Space Grotesk / Syne (display) + Inter (cuerpo), todas gratuitas en Google Fonts — confirmar o proponer otra.
 - **Formulario de contacto**: Formspree vs Web3Forms (ambos gratis; Web3Forms no requiere cuenta compleja ni backend).
 - **FAQ**: ¿vive dentro de Servicios o de Contacto?
 - **Onboarding de clientes**: revisar y ajustar el borrador de `04-onboarding-clientes.md`.
