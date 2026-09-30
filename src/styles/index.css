@@ -16,6 +16,10 @@ html {
 body {
   background-color: #050505;
   color: #F5F5F5;
+  /* Sombra sutil: invisible sobre el fondo casi negro (mismo color), pero da contraste
+     justo donde el texto pasa por encima de las esferas 3D de fondo (brillos, superficies
+     claras) sin tener que tocar la paleta. Se hereda a todo el texto del sitio. */
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
 }
 
 @media (prefers-reduced-motion: reduce) {

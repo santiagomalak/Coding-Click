@@ -8,7 +8,9 @@ export default {
       colors: {
         bg: "#050505",
         ink: "#F5F5F5",
-        muted: "#8A8A8A",
+        // Gris con un toque sutil de verde lima (era #8A8A8A neutro) — mismo nivel de
+        // luminosidad, detalle de marca, decidido junto con la sombra de texto de arriba.
+        muted: "#93987F",
         line: "#1F1F1F",
         accent: "#C6FF3D",
       },

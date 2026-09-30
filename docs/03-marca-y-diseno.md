@@ -21,11 +21,13 @@ La v1 se lanza **únicamente en modo oscuro**. Un modo claro queda documentado m
 |---|---|
 | Fondo | #050505 |
 | Texto principal | #F5F5F5 |
-| Texto secundario | #8A8A8A |
+| Texto secundario | #93987F (gris con un toque sutil de verde lima — antes #8A8A8A neutro, cambiado 2026-09-30, ver nota abajo) |
 | Líneas / divisores | #1F1F1F |
 | Acento único | #C6FF3D (lima) |
 
-Reglas: un único acento, usado con moderación (CTAs, hover, números clave, ripple del click, halos). Sin gradientes de color ni sombras de color — la profundidad sale de las luces del 3D y de los grises. Nunca el acento en párrafos largos ni texto chico.
+Reglas: un único acento, usado con moderación (CTAs, hover, números clave, ripple del click, halos). Sin gradientes de color ni sombras DE COLOR — la profundidad sale de las luces del 3D y de los grises. Nunca el acento en párrafos largos ni texto chico. Excepción explícita a "sin sombras": todo el texto del sitio lleva una sombra NEGRA sutil (`text-shadow`, ver nota abajo) — no es una sombra de color, es puro contraste, invisible sobre el fondo negro y solo se nota donde el texto pasa sobre las esferas 3D.
+
+**Nota 2026-09-30 (feedback de Santiago viendo el deploy con las esferas 3D)**: el texto secundario se perdía visualmente al pasar sobre las esferas de fondo (mucho contraste propio: zonas casi negras y brillos blancos intensos). Evaluamos beige y un lima más mate como alternativas de color — ninguna resuelve el problema de raíz porque es un problema de CONTRASTE LOCAL contra un fondo con brillo variable, no de qué matiz se elige (cualquier color de luminosidad media tiene el mismo problema). La solución real fue sumar `text-shadow: 0 1px 5px rgba(0,0,0,0.65)` en `body` (se hereda a todo el texto, ver `src/styles/index.css`) — como es negro y el fondo también es casi negro, no se nota en ningún lado EXCEPTO donde hace falta (sobre las esferas). Además, como ajuste de marca (no de legibilidad), el gris secundario pasó de neutro a un gris con un toque de verde lima.
 
 ### Paleta clara (documentada, NO implementar en v1)
 | Rol | Color |
