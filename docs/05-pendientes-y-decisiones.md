@@ -8,6 +8,7 @@
 - **2026-09-29** — Motion: Lenis + GSAP ScrollTrigger, cursor custom de 8px→56px con `mix-blend-mode: difference`, ripple de acento al click, CTAs magnéticos, marquee para logos/herramientas.
 - **2026-09-29** — Modo claro: queda documentado (paleta propuesta en `03-marca-y-diseno.md`) pero se posterga a después del lanzamiento.
 - **2026-09-29** — Repo de GitHub: **privado**. Conexión a Vercel: Santiago la hace él mismo una vez que haya una base del proyecto lista.
+- **2026-09-30** — Esferas 3D: se separan en dos capas (esferas ambientales estáticas en las esquinas de todo el sitio + ball-pit con física real solo en el footer), después de revisar cuadro por cuadro un video real del shot de Kynesys que mostró que la referencia NO tiene física (es estática + un morph de geometría por sección que decidimos no copiar). Material: negro clearcoat + rim light en ambas capas, nunca lima de relleno. Detalle completo en `03-marca-y-diseno.md` → "Elementos 3D".
 
 ## Falta definir (Santiago)
 - **Nombre final**: ¿"Coding Click" queda o cambia? Todo el copy y la config están armados para que cambiarlo sea editar un solo archivo.
