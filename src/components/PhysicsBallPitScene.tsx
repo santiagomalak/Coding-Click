@@ -3,7 +3,6 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { gsap, isDesktopPointer, prefersReducedMotion } from "@/lib/motion";
-import { viewSizeAtZ } from "@/lib/three-utils";
 
 const DESKTOP_COUNT = 18;
 const MOBILE_COUNT = 9;
@@ -30,8 +29,27 @@ export default function PhysicsBallPitScene() {
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
+    // Cámara ortográfica en vez de perspectiva: con un contenedor tan ancho y bajo (~4:1 en
+    // desktop) una cámara en perspectiva estira las esferas en óvalos hacia los bordes
+    // laterales (ver docs/05-pendientes-y-decisiones.md — feedback de Santiago: "las pelotas
+    // de los laterales están rotas"). La ortográfica no tiene punto de fuga: todas las esferas
+    // se ven perfectamente circulares sin importar su posición en el frame.
+    const ORTHO_VIEW_HEIGHT = 11.2; // alto del mundo en unidades — igual al que daba la cámara en perspectiva anterior a z=0 (fov 50 / distancia 12), para no cambiar el tamaño ni el spacing de las esferas.
+    function orthoHalfSize(w: number, h: number) {
+      const halfH = ORTHO_VIEW_HEIGHT / 2;
+      return { halfW: halfH * (w / h), halfH };
+    }
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
     camera.position.set(0, 0, 12);
+    function applyOrthoSize(w: number, h: number) {
+      const { halfW, halfH } = orthoHalfSize(w, h);
+      camera.left = -halfW;
+      camera.right = halfW;
+      camera.top = halfH;
+      camera.bottom = -halfH;
+      camera.updateProjectionMatrix();
+    }
+    applyOrthoSize(width, height);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -74,9 +92,10 @@ export default function PhysicsBallPitScene() {
       for (const body of wallBodies) world.removeBody(body);
       wallBodies.length = 0;
 
-      const { width: viewW, height: viewH } = viewSizeAtZ(camera, 0);
-      const halfW = viewW / 2;
-      const halfH = viewH / 2;
+      const halfW = camera.right;
+      const halfH = camera.top;
+      const viewW = halfW * 2;
+      const viewH = halfH * 2;
       const thick = 2;
 
       addStaticBox([0, -halfH - thick / 2 + 0.05, 0], [viewW + thick * 2, thick, 4]);
@@ -187,8 +206,7 @@ export default function PhysicsBallPitScene() {
     function onResize() {
       width = container!.clientWidth;
       height = container!.clientHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+      applyOrthoSize(width, height);
       renderer.setSize(width, height);
       buildBounds();
     }

@@ -5,7 +5,7 @@
 export const brand = {
   name: "Coding Click", // PROVISORIO — ver docs/05-pendientes-y-decisiones.md
   tagline: "Desarrollo web + marketing, todo en un solo lugar",
-  logoSrc: "/logo-isotipo-vidrio.svg", // isotipo real (versión vidrio, entregado por Maia — marca/coding-click-4a)
+  logoSrc: "/logo-isotipo-color.svg", // isotipo real, versión color/plana (entregado por Maia — marca/coding-click-4a). No la de vidrio: a este tamaño (header) el reflejo/detalle no se aprecia — el propio LEEME.txt del entregable dice que el vidrio recién funciona a partir de 128px.
 };
 
 export const contact = {
