@@ -272,5 +272,31 @@ export default function AmbientOrbs() {
     };
   }, []);
 
-  return <div ref={containerRef} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 opacity-70" />;
+  // Las esferas ambientales están ancladas al viewport completo (position: fixed), así que sin
+  // este fix terminaban superpuestas visualmente con el contenido del footer una vez que se
+  // asentaban ahí por gravedad (bug real confirmado 2026-09-30 revisando el sitio en vivo: tapaban
+  // el logo y el copyright). Se atenúan a 0 apenas el footer se acerca, dejando la capa ambiental
+  // reservada al resto del sitio — el footer ya tiene su propio ball-pit dedicado.
+  useEffect(() => {
+    const container = containerRef.current;
+    const footer = document.querySelector("footer");
+    if (!container || !footer || prefersReducedMotion()) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        container.style.opacity = entry.isIntersecting ? "0" : "0.7";
+      },
+      { rootMargin: "0px 0px 400px 0px", threshold: 0 },
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 -z-10 opacity-70 transition-opacity duration-700 ease-out"
+    />
+  );
 }
