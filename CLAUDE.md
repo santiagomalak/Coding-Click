@@ -21,11 +21,12 @@ Scaffold funcional en Vite + React 18 + TypeScript + Tailwind (`npm install && n
 - Header que pasa a blur + fondo oscuro al scrollear (`Header.tsx`).
 - Barra de progreso de scroll a la derecha (`ScrollProgress.tsx`).
 - Transición del marco del hero (rounded-3xl) abriéndose a full-bleed con el scroll (`HeroFrame.tsx`).
+- Ripple de click: cada click dibuja un anillo lima que se expande y desaparece (`ClickRipple.tsx`), y además dispara un `CustomEvent` global `"site:click-impulse"` con `{x, y}` — pensado para que las futuras esferas 3D (ver pendiente abajo) reciban el impulso y se empujen hacia afuera. Todavía no hay nada escuchando ese evento.
+- Marquee infinito de stack/herramientas (`Marquee.tsx`) en la home, debajo del botón "Ver todos los packs y precios". Lista nombres de tecnologías/canales (React, WhatsApp Business, Meta Ads, etc.), NO logos de clientes — no inventar clientes.
 - Todo respeta `prefers-reduced-motion` (se desactiva por completo) y el cursor/magnético solo corren en `pointer: fine` + desktop.
 
 **Todavía NO implementado** (ver `docs/03-marca-y-diseno.md` para el detalle exacto de cada uno):
-- Esferas 3D con física (Three.js/OGL) en hero y footer.
-- Ripple de click (empuja esferas cercanas) + marquee infinito de herramientas/logos.
+- Esferas 3D con física (Three.js/OGL) en hero y footer — clearcoat material, rim lighting, caen/rebotan/se apilan, se empujan con el mouse, y deben escuchar el evento `"site:click-impulse"` que ya dispara `ClickRipple.tsx` para recibir el impulso del click. Lazy-load + fallback en mobile/low-end (imagen estática o menos esferas). Respeta `prefers-reduced-motion`.
 - Conexión real del formulario de contacto (Formspree o Web3Forms — sin definir, ver pendientes).
 - Contenido real de Portfolio y Blog (hoy vacío a propósito — NO inventar proyectos ni posts).
 
