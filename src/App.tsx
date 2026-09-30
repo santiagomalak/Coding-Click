@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import CustomCursor from "@/components/CustomCursor";
+import ClickRipple from "@/components/ClickRipple";
 import ScrollProgress from "@/components/ScrollProgress";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { ScrollTrigger } from "@/lib/motion";
@@ -29,6 +30,7 @@ export default function App() {
   return (
     <div className="flex min-h-screen flex-col">
       <CustomCursor />
+      <ClickRipple />
       <ScrollProgress />
       <Header />
       <main className="flex-1">

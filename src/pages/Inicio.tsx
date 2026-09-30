@@ -5,6 +5,7 @@ import PackRow from "@/components/PackRow";
 import Reveal from "@/components/Reveal";
 import MaskReveal from "@/components/MaskReveal";
 import HeroFrame from "@/components/HeroFrame";
+import Marquee from "@/components/Marquee";
 import { comboPacks } from "@/config/site.config";
 import { getPortfolioItems } from "@/lib/content";
 
@@ -61,7 +62,11 @@ export default function Inicio() {
         </Button>
       </div>
 
-      <Reveal className="border-t border-line px-[5vw] py-24">
+      <Marquee
+        items={["React", "TypeScript", "Node.js", "Tailwind CSS", "WhatsApp Business", "Instagram", "Meta Ads", "n8n", "Vercel"]}
+      />
+
+      <Reveal className="border-t-0 border-line px-[5vw] py-24">
         <SectionLabel number="03" label="Stack Advisor" />
         <h2 className="mt-4 max-w-2xl font-display text-4xl md:text-6xl">
           ¿No sabés qué necesitás? Respondé 4 preguntas.
