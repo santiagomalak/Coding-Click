@@ -145,7 +145,12 @@ export default function AmbientOrbs() {
       halfH = viewH / 2;
       const thick = 2;
 
-      addStaticBox([0, -halfH - thick / 2 + 0.05, 0], [viewW + thick * 2, thick, 4]);
+      // Piso levantado a la mitad de la mitad inferior del viewport (no al borde real): así los
+      // objetos se asientan en el tercio superior/medio de la pantalla y dejan libre la franja
+      // inferior donde suele haber UI (CTAs del hero, footer) — antes caían hasta el borde exacto
+      // y terminaban tapando esos elementos (bug real confirmado 2026-09-30 en el sitio en vivo).
+      const floorY = -halfH * 0.5;
+      addStaticBox([0, floorY - thick / 2 + 0.05, 0], [viewW + thick * 2, thick, 4]);
       addStaticBox([-halfW - thick / 2 + 0.05, 0, 0], [thick, viewH + thick * 2, 4]);
       addStaticBox([halfW + thick / 2 - 0.05, 0, 0], [thick, viewH + thick * 2, 4]);
       addStaticBox([0, 0, -2.2], [viewW + thick * 2, viewH + thick * 2, thick]);

@@ -19,13 +19,27 @@ export default function Inicio() {
           <SectionLabel number="01" label="Desarrollo + Marketing" />
         </Reveal>
         <h1 className="mt-6 font-display text-display">
-          <MaskReveal trigger="mount" delay={0.1}>
+          {/* Peso subido a Regular (400) en esta línea: en Light (300) la "g" de Space Grotesk
+              se leía casi como una "q" a este tamaño — bug de legibilidad real, no un typo (el
+              texto siempre dijo "negocio"). "online" se deja en Light porque ahí el trazo hueco
+              ya aporta el contraste, no necesita el peso extra. */}
+          <MaskReveal trigger="mount" delay={0.1} className="font-normal">
             Hacemos crecer tu negocio
           </MaskReveal>
           <MaskReveal trigger="mount" delay={0.22}>
-            <span className="[-webkit-text-stroke:1px_#F5F5F5] text-transparent">online</span>
+            {/* Efecto "vidrio": panel esmerilado (backdrop-filter) detrás de la palabra + una
+                distorsión SVG sutil (feTurbulence/feDisplacementMap, filtro definido abajo) para
+                que se sienta como si se viera a través de una superficie de vidrio irregular en
+                vez de un simple blur — conecta con el material de las esferas 3D. */}
+            <span className="glass-word [-webkit-text-stroke:1px_#F5F5F5] text-transparent">online</span>
           </MaskReveal>
         </h1>
+        <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
+          <filter id="glass-distort">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.06" numOctaves="2" seed="7" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </svg>
         <Reveal delay={0.4} className="mt-6 max-w-xl">
           <p className="text-lg text-muted">
             Web y marketing digital en un solo lugar, sin vueltas. Vos te enfocás en tu negocio, nosotros en que se vea y te
