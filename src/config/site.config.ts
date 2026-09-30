@@ -9,7 +9,7 @@ export const brand = {
 };
 
 export const contact = {
-  whatsappNumber: "5490000000000", // PROVISORIO — reemplazar por el número real (formato internacional, sin +)
+  whatsappNumber: "5493834553249", // Número real de Santiago (WhatsApp personal)
   whatsappDefaultMessage: "Hola! Me interesa saber más sobre sus servicios.",
   email: "hola@codingclick.com.ar", // PROVISORIO
   socials: {
