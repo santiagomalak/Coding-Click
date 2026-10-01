@@ -19,10 +19,10 @@
 - **2026-09-30** — Tres ajustes de feedback en vivo: (1) logo del header pasó a la versión "color" (plana, no vidrio) y de 28px a 36px — a ese tamaño el reflejo/punto del vidrio no se apreciaba, mismo motivo que el favicon; (2) el link "WhatsApp ↘" del header tenía la flecha dentro del subrayado y la línea la atravesaba — ahora el subrayado va solo debajo del texto y la flecha queda suelta; (3) bug real en el ball-pit del footer: con cámara en perspectiva y un contenedor tan ancho y bajo (~4:1), las esferas cerca de los bordes laterales se veían estiradas en óvalos — cambiada a cámara ortográfica (sin punto de fuga), esferas circulares en todo el ancho.
 - **2026-09-30** — Logo del header: Santiago probó la versión "color" y prefirió volver a la de **vidrio**, pero más grande (36px → 44px) para que el reflejo se note. Queda así: vidrio a 44px.
 - **2026-09-30** — Menú mobile: no existía ninguna forma de llegar a Servicios/Portfolio/Nosotros/Blog/Contacto desde el celular (el `<nav>` del header estaba oculto con `md:flex`, sin alternativa). Se agregó un botón hamburguesa (solo visible `md:hidden`) que despliega un panel con los 5 links, debajo del header.
+- **2026-09-30** — WhatsApp: **definido**. Número real de Santiago cargado en `contact.whatsappNumber`.
 
 ## Falta definir (Santiago)
 - **Nombre final**: ¿"Coding Click" queda o cambia? Todo el copy y la config están armados para que cambiarlo sea editar un solo archivo.
-- **Número de WhatsApp real** (hoy provisorio en la config).
 - **Redes sociales** de la agencia (links reales para el footer).
 - **Precios definitivos** (hoy son rangos orientativos, ver `02-packs-y-precios.md`).
 - **Contenido real de Portfolio**: al menos 2–3 proyectos reales para lanzar (con imagen, tipo de proyecto, breve descripción).
