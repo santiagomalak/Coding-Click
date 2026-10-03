@@ -10,8 +10,14 @@ import {
   comboPacks,
   commercialRules,
 } from "@/config/site.config";
+import { useSeo } from "@/lib/useSeo";
 
 export default function Servicios() {
+  useSeo({
+    title: "Packs y precios de desarrollo web y marketing",
+    description: "Landing, sitio institucional, e-commerce y a medida. Precios orientativos y combos con marketing digital.",
+    path: "/servicios",
+  });
   return (
     <div>
       <section className="px-[5vw] pb-16 pt-24">

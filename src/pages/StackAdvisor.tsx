@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import { recomendar, type Respuestas } from "@/config/stack-advisor-reglas";
 import { comboPacks, marketingPacks } from "@/config/site.config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { useSeo } from "@/lib/useSeo";
 
 type Step = 0 | 1 | 2 | 3 | 4;
 
@@ -52,6 +53,11 @@ const questions: {
 ];
 
 export default function StackAdvisorPage() {
+  useSeo({
+    title: "Encontrá tu pack ideal",
+    description: "Respondé unas preguntas rápidas y te recomendamos el pack de desarrollo y marketing que mejor se ajusta a tu negocio.",
+    path: "/stack-advisor",
+  });
   const [step, setStep] = useState<Step>(0);
   const [answers, setAnswers] = useState<Partial<Respuestas>>({});
 

@@ -8,8 +8,14 @@ import HeroFrame from "@/components/HeroFrame";
 import Marquee from "@/components/Marquee";
 import { comboPacks } from "@/config/site.config";
 import { getPortfolioItems } from "@/lib/content";
+import { useSeo } from "@/lib/useSeo";
 
 export default function Inicio() {
+  useSeo({
+    title: "Desarrollo web y marketing digital para pymes",
+    description: "Landing pages, sitios institucionales y e-commerce con marketing digital incluido. Conocé los packs y precios de Coding Click.",
+    path: "/",
+  });
   const portfolio = getPortfolioItems().slice(0, 3);
 
   return (

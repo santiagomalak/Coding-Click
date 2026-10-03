@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
 import SectionLabel from "@/components/SectionLabel";
 import { getBlogPosts } from "@/lib/content";
+import { useSeo } from "@/lib/useSeo";
 
 export default function Blog() {
+  useSeo({
+    title: "Blog",
+    description: "Artículos sobre desarrollo web y marketing digital para pymes y emprendedores.",
+    path: "/blog",
+  });
   const posts = getBlogPosts();
 
   return (

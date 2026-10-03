@@ -1,7 +1,13 @@
 import SectionLabel from "@/components/SectionLabel";
 import { getPortfolioItems } from "@/lib/content";
+import { useSeo } from "@/lib/useSeo";
 
 export default function Portfolio() {
+  useSeo({
+    title: "Portfolio de proyectos",
+    description: "Proyectos de desarrollo web realizados por Coding Click.",
+    path: "/portfolio",
+  });
   const items = getPortfolioItems();
 
   return (

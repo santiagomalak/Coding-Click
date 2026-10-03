@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Coding Click — Desarrollo web + marketing</title>
     <meta name="description" content="Desarrollo web y marketing digital para emprendedores y pymes." />
+    <!-- Open Graph / Twitter Card: sin esto, cualquier link del sitio compartido por WhatsApp o
+         redes se ve pelado (sin imagen ni descripción). Son estáticos (un solo preview para
+         todo el sitio) porque esta es una SPA sin server-side rendering: WhatsApp/Facebook no
+         ejecutan JS, así que un tag seteado por React después de cargar la página no lo ven —
+         solo lo que está en este HTML de entrada. Los <title>/<meta description> por página SÍ
+         se actualizan con JS (ver src/lib/useSeo.ts) porque a esos los lee Google, que sí
+         renderiza JS. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Coding Click" />
+    <meta property="og:title" content="Coding Click — Desarrollo web + marketing" />
+    <meta property="og:description" content="Desarrollo web y marketing digital para emprendedores y pymes. Landing pages, sitios institucionales, e-commerce y más." />
+    <!-- OJO: estas URLs son fijas a mano porque este archivo es HTML estático (no puede leer
+         site.config.ts). Si cambia el dominio (siteUrl en site.config.ts), actualizar también
+         acá — son las 3 únicas URLs hardcodeadas en todo el proyecto. -->
+    <meta property="og:image" content="https://coding-click.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://coding-click.vercel.app/" />
+    <meta property="og:locale" content="es_AR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Coding Click — Desarrollo web + marketing" />
+    <meta name="twitter:description" content="Desarrollo web y marketing digital para emprendedores y pymes." />
+    <meta name="twitter:image" content="https://coding-click.vercel.app/og-image.png" />
     <!-- Isotipo real (versión vidrio) como favicon: SVG para navegadores modernos (nítido a
          cualquier resolución), .ico como fallback universal, apple-touch-icon para iOS. -->
     <link rel="icon" type="image/svg+xml" href="/logo-isotipo-vidrio.svg" />

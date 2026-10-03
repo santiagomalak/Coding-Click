@@ -3,8 +3,14 @@ import SectionLabel from "@/components/SectionLabel";
 import Button from "@/components/Button";
 import { contact } from "@/config/site.config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { useSeo } from "@/lib/useSeo";
 
 export default function Contacto() {
+  useSeo({
+    title: "Contacto",
+    description: "Escribinos por WhatsApp o dejanos tu mensaje. Te respondemos a la brevedad para charlar sobre tu proyecto.",
+    path: "/contacto",
+  });
   const [sent, setSent] = useState(false);
 
   // TODO: conectar a Formspree o Web3Forms (ver docs/05-pendientes-y-decisiones.md).

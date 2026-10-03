@@ -1,9 +1,18 @@
 import { useParams, Link } from "react-router-dom";
 import { getBlogPosts } from "@/lib/content";
+import { useSeo } from "@/lib/useSeo";
 
 export default function BlogPost() {
   const { slug } = useParams();
   const post = getBlogPosts().find((p) => p.slug === slug);
+
+  // El hook va antes del return temprano de abajo: las reglas de hooks de React exigen que se
+  // llame siempre, en el mismo orden, en cada render — nunca después de un `if`.
+  useSeo({
+    title: post ? post.title : "Artículo no encontrado",
+    description: post ? post.excerpt : "El artículo que buscás no existe o fue movido.",
+    path: `/blog/${slug ?? ""}`,
+  });
 
   if (!post) {
     return (

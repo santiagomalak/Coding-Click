@@ -1,4 +1,5 @@
 import SectionLabel from "@/components/SectionLabel";
+import { useSeo } from "@/lib/useSeo";
 
 const pasos = [
   { n: "01", t: "Contacto inicial", d: "Por WhatsApp, formulario, o habiendo hecho el Stack Advisor." },
@@ -9,6 +10,11 @@ const pasos = [
 ];
 
 export default function Nosotros() {
+  useSeo({
+    title: "Cómo trabajamos",
+    description: "Conocé el proceso de trabajo de Coding Click, del contacto inicial a la entrega de tu proyecto.",
+    path: "/nosotros",
+  });
   return (
     <div className="px-[5vw] py-24">
       <SectionLabel number="03" label="Nosotros" />

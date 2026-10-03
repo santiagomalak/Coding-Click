@@ -8,6 +8,12 @@ export const brand = {
   logoSrc: "/logo-isotipo-vidrio.svg", // isotipo real, versión vidrio (entregado por Maia — marca/coding-click-4a). A 44px en el header el reflejo ya se aprecia bien (Santiago prefiere esta versión ahí).
 };
 
+// Dominio público del sitio — usado para el sitemap, los tags canonical/Open Graph y el
+// sitio:URL del robots.txt. PROVISORIO: hoy es el dominio de Vercel; actualizar acá apenas
+// haya un dominio propio y no hace falta tocar nada más (sitemap.xml se regenera solo en el
+// build, ver scripts/generate-sitemap.mjs).
+export const siteUrl = "https://coding-click.vercel.app";
+
 export const contact = {
   whatsappNumber: "5493834553249", // Número real de Santiago (WhatsApp personal)
   whatsappDefaultMessage: "Hola! Me interesa saber más sobre sus servicios.",
