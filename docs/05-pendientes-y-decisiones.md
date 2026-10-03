@@ -23,12 +23,20 @@
 - **2026-10-03** — SEO/analytics base: el sitio no tenía nada de esto. Se agregó: (1) `<title>`/`<meta description>`/canonical por página vía un hook (`src/lib/useSeo.ts`) — no hay SSR, así que esto lo lee Google (ejecuta JS al indexar) pero NO WhatsApp/Facebook (no ejecutan JS); (2) tags Open Graph/Twitter Card estáticos en `index.html` con una imagen de preview generada a medida (`public/og-image.png`, 1200x630) — esto sí lo ve WhatsApp, y es el mismo para todo el sitio por la misma razón; (3) `robots.txt` + `sitemap.xml`, este último generado en cada build (`scripts/generate-sitemap.mjs`, corre como `prebuild`) a partir de las rutas reales + los posts de blog que existan, para que nunca quede desactualizado. Falta todavía: conectar un analytics real (Google Analytics u otro) — necesita que Santiago cree la cuenta y pase el ID de medición, no es algo que se pueda resolver solo con código.
 - **2026-10-03** — Bug crítico encontrado y arreglado: cualquier link directo a una página que no sea el home (`/servicios`, `/portfolio`, `/contacto`, etc. — exactamente las URLs que ahora están en el sitemap para que Google las indexe) tiraba un 404 real de Vercel, antes de que React llegara a cargar. Faltaba `vercel.json` con el rewrite de SPA (`"/(.*)" → "/index.html"`) — sin eso, Vercel sirve archivos estáticos literales y no sabía delegarle el ruteo a React Router. Rompía: compartir un link directo a una sección, los resultados de Google, actualizar (F5) en cualquier página que no sea "/". Probado en el sitio en vivo antes de escribir el fix (navegación directa a /servicios devolvía "404: NOT_FOUND" de Vercel). De paso se agregó también una ruta catch-all (`*` → `src/pages/NotFound.tsx`) en React Router, porque tampoco había ninguna — una URL mal escrita dejaba el `<main>` completamente vacío en vez de mostrar algo.
 
-## Falta definir (Santiago)
+## Falta definir / falta que haga Santiago
+Separado en dos porque son de naturaleza distinta: unas son decisiones (elegir entre opciones),
+otras son pasos que necesitan una cuenta o un dato que solo Santiago puede crear/dar — no es
+que falte código, es que no se pueden resolver desde acá.
+
+### Necesitan una cuenta o un dato de Santiago (no son decisiones de diseño)
+- **Google Analytics (u otro)**: hoy el sitio no mide nada — cero visibilidad de cuánta gente entra o qué mira. Santiago tiene que crear una propiedad GA4 gratis en analytics.google.com y pasar el ID de medición (`G-XXXXXXX`); se conecta en minutos una vez que lo tenga.
+- **Formulario de contacto**: el submit hoy es puro humo (ver `src/pages/Contacto.tsx`, no manda nada a ningún lado). Web3Forms es la opción más simple — Santiago entra a web3forms.com, pone su mail, le llega un "access key" por correo, y con ese key se conecta el formulario de verdad.
+- **Redes sociales** reales de la agencia (links para el footer).
+- **Rubros para el portfolio de muestra**: quedó pendiente que Santiago elija 3 rubros (uno por pack: landing / institucional / e-commerce) de la lista que se charló, para construir esos proyectos de ejemplo.
+
+### Decisiones de contenido/negocio
 - **Nombre final**: ¿"Coding Click" queda o cambia? Todo el copy y la config están armados para que cambiarlo sea editar un solo archivo.
-- **Redes sociales** de la agencia (links reales para el footer).
 - **Precios definitivos** (hoy son rangos orientativos, ver `02-packs-y-precios.md`).
-- **Contenido real de Portfolio**: al menos 2–3 proyectos reales para lanzar (con imagen, tipo de proyecto, breve descripción).
 - **Contenido real de Blog**: al menos 1–2 posts para no lanzar la página vacía (o placeholders si se prefiere arrancar así).
-- **Formulario de contacto**: Formspree vs Web3Forms (ambos gratis; Web3Forms no requiere cuenta compleja ni backend).
 - **FAQ**: ¿vive dentro de Servicios o de Contacto?
 - **Onboarding de clientes**: revisar y ajustar el borrador de `04-onboarding-clientes.md`.
