@@ -37,7 +37,7 @@ Reglas: un único acento, usado con moderación (CTAs, hover, números clave, ri
 | Acento único | lima desaturado (bajar saturación del #C6FF3D para contraste AA sobre claro; no usarlo puro — pega muy fuerte sobre beige) |
 
 ## Tipografía
-- **Display**: grotesca geométrica fina y ancha (Space Grotesk Light / Syne / PP Neue Machina — usar la que esté disponible gratis en Google Fonts, ej. Space Grotesk + Syne), 88–160px en desktop, tracking -0.03em, interlineado 0.95.
+- **Display**: grotesca geométrica fina y ancha, 88–160px en desktop, tracking -0.03em, interlineado 0.95, peso Light (300). Era Space Grotesk; se cambió a **Outfit** el 2026-10-03 porque la "g" minúscula de Space Grotesk es un lazo cerrado que se lee ambiguo como "q" a este tamaño en los 5 pesos (glifo del diseño de la tipografía, no un bug de peso/carga — se comprobó renderizando "negocio" en los 5 pesos). Outfit mantiene el mismo espíritu geométrico con una "g" convencional y legible ya en Light.
 - **Recurso firma**: en los titulares principales, la última línea sólida excepto una palabra clave en versión outline (`color: transparent` + `-webkit-text-stroke: 1px`).
 - **Cuerpo**: Inter, 16–18px; bajadas destacadas en bold con interlineado 1.15.
 - **Etiquetas de sección**: mayúsculas 11px, letter-spacing 0.08em, gris, entre corchetes y numeradas → `[ 01 — SERVICIOS ]`.

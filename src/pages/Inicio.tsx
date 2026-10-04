@@ -25,11 +25,12 @@ export default function Inicio() {
           <SectionLabel number="01" label="Desarrollo + Marketing" />
         </Reveal>
         <h1 className="mt-6 font-display text-display">
-          {/* Peso subido a Regular (400) en esta línea: en Light (300) la "g" de Space Grotesk
-              se leía casi como una "q" a este tamaño — bug de legibilidad real, no un typo (el
-              texto siempre dijo "negocio"). "online" se deja en Light porque ahí el trazo hueco
-              ya aporta el contraste, no necesita el peso extra. */}
-          <MaskReveal trigger="mount" delay={0.1} className="font-normal">
+          {/* Esta línea va en el peso default (300, Light): con Space Grotesk la "g" de
+              "negocio" se leía casi como una "q" en los 5 pesos disponibles (no era un bug de
+              peso ni de carga, era el diseño del glifo), así que se cambió la tipografía display
+              completa a Outfit (ver tailwind.config.ts) — ahí la "g" es convencional y legible ya
+              en Light, sin necesitar subir el peso. */}
+          <MaskReveal trigger="mount" delay={0.1}>
             Hacemos crecer tu negocio
           </MaskReveal>
           <MaskReveal trigger="mount" delay={0.22} className="mt-[0.14em]">
@@ -38,10 +39,8 @@ export default function Inicio() {
                 que se sienta como si se viera a través de una superficie de vidrio irregular en
                 vez de un simple blur — conecta con el material de las esferas 3D. mt-[0.14em]
                 (relativo al tamaño gigante de esta línea) separa el panel de la "g" de "negocio"
-                de arriba, que con el peso 400 nuevo se pisaba con el borde del panel.
-                El trazo (.online-neon) vive en un span aparte adentro del panel (.glass-word)
-                para poder animarlo — titileo de neón mal conectado al entrar y después un pulso
-                parejo en loop — sin tocar el panel de vidrio en sí, que se queda fijo. */}
+                de arriba, cuyo descendente baja lo suficiente como para pisar el borde del panel
+                si no se deja este margen. */}
             <span className="glass-word">
               <span className="online-neon text-transparent">online</span>
             </span>
