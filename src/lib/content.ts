@@ -1,7 +1,10 @@
 // Carga de contenido editable (portfolio y blog) sin tocar código.
 // Cada proyecto/artículo es un archivo .md en src/content/*, con front-matter simple.
-// Hoy ambas carpetas están vacías a propósito: no hay que inventar proyectos, clientes
-// ni posts — Santiago suma los reales cuando los tenga (ver docs/05-pendientes-y-decisiones.md).
+// Esto es solo para trabajos REALES de clientes — hoy ambas carpetas están vacías a
+// propósito, Santiago suma los reales cuando los tenga. Los proyectos de MUESTRA
+// (maquetas ficticias, ver docs/05-pendientes-y-decisiones.md) son un caso aparte:
+// viven como páginas propias en src/pages/demos/ y se listan a mano en Portfolio.tsx,
+// no pasan por este sistema de markdown.
 
 export type PortfolioItem = {
   slug: string;

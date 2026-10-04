@@ -6,6 +6,9 @@ type SeoOptions = {
   description: string;
   /** Path relativo (ej. "/servicios") para el <link rel="canonical">. Default: la ruta actual. */
   path?: string;
+  /** true en páginas de demo (src/pages/demos/*): son negocios ficticios, no tienen que
+   * aparecer indexados en Google como si fueran reales. */
+  noindex?: boolean;
 };
 
 /**
@@ -15,7 +18,7 @@ type SeoOptions = {
  * ejecutan JS y solo leen el <head> estático de index.html (ver los tags og: ahí, que por eso
  * son los mismos para todo el sitio). Ver docs/05-pendientes-y-decisiones.md.
  */
-export function useSeo({ title, description, path }: SeoOptions) {
+export function useSeo({ title, description, path, noindex }: SeoOptions) {
   useEffect(() => {
     const fullTitle = `${title} — Coding Click`;
     document.title = fullTitle;
@@ -35,5 +38,17 @@ export function useSeo({ title, description, path }: SeoOptions) {
       document.head.appendChild(canonicalTag);
     }
     canonicalTag.setAttribute("href", `${siteUrl}${path ?? window.location.pathname}`);
-  }, [title, description, path]);
+
+    let robotsTag = document.querySelector('meta[name="robots"]');
+    if (noindex) {
+      if (!robotsTag) {
+        robotsTag = document.createElement("meta");
+        robotsTag.setAttribute("name", "robots");
+        document.head.appendChild(robotsTag);
+      }
+      robotsTag.setAttribute("content", "noindex, nofollow");
+    } else if (robotsTag) {
+      robotsTag.remove();
+    }
+  }, [title, description, path, noindex]);
 }
